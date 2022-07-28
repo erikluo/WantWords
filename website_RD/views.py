@@ -15,7 +15,9 @@ def md5(str):
 appid = '20***************79' 
 secretKey = 'D2u0***********Yhz5' 
 
-BASE_DIR = './website_RD/'
+WEBSITE_DIR = './website_RD/'
+MODELS_DATA_DIR = '/data/models/'
+
 device = torch.device('cpu')
 torch.backends.cudnn.benchmark = True
 words_t = torch.tensor(np.array([0]))
@@ -32,9 +34,9 @@ MODE = 'Psc'
 lac = thulac.thulac()
 
 def load_data():
-    (word2index, index2word, _, _, _, _, _) = np.load(BASE_DIR + 'data_inUse1.npy', allow_pickle=True)
-    wd_charas = np.load(BASE_DIR + 'data_inUse2.npy', allow_pickle=True)
-    ((_, _, _, wd_sems, wd_POSs),(_, mask_s)) = np.load(BASE_DIR + 'data_inUse3.npy', allow_pickle=True)
+    (word2index, index2word, _, _, _, _, _) = np.load(MODELS_DATA_DIR + 'data_inUse1.npy', allow_pickle=True)
+    wd_charas = np.load(MODELS_DATA_DIR + 'data_inUse2.npy', allow_pickle=True)
+    ((_, _, _, wd_sems, wd_POSs),(_, mask_s)) = np.load(MODELS_DATA_DIR + 'data_inUse3.npy', allow_pickle=True)
     mask_s = torch.from_numpy(mask_s).to(device)
     wd_POSs = torch.from_numpy(wd_POSs).float().to(device)
     wd_charas = torch.from_numpy(wd_charas).float().to(device)
@@ -51,16 +53,16 @@ index2word = np.array(index2word)
 
 # 添加同义词词林用于描述为一个词时的同义词推荐
 index2synset = [[] for i in range(len(word2index))]
-for line in open(BASE_DIR + 'word2synset_synset.txt').readlines():
+for line in open(MODELS_DATA_DIR + 'word2synset_synset.txt').readlines():
     wd = line.split()[0]
     synset = line.split()[1:]
     for syn in synset:
         index2synset[word2index[wd]].append(word2index[syn])
 
-MODEL_FILE = BASE_DIR + 'Zh.model'
+MODEL_FILE = MODELS_DATA_DIR + 'Zh.model'
 model = torch.load(MODEL_FILE, map_location=lambda storage, loc: storage)
 model.eval()
-wd_data_ = json.load(open(BASE_DIR+'wd_def_for_website_zh.json'))
+wd_data_ = json.load(open(MODELS_DATA_DIR+'wd_def_for_website_zh.json'))
 
 #wd_data = dict()
 wd_data = wd_data_.copy()
@@ -73,8 +75,8 @@ del wd_data_
 
 #========================EnglishRD
 MODE_en = 'rsl'
-MODEL_FILE_en = BASE_DIR + 'En.model'
-wd_data_en_ = json.load(open(BASE_DIR+'wd_def_for_website_En.json'))
+MODEL_FILE_en = MODELS_DATA_DIR + 'En.model'
+wd_data_en_ = json.load(open(MODELS_DATA_DIR+'wd_def_for_website_En.json'))
 
 wd_data_en = wd_data_en_.copy()
 wd_defi_en = wd_data_en_.copy()
@@ -113,8 +115,8 @@ def mask_noFeature(label_size, wd2fea, feature_num):
             mask_nofea[i] = 1
     return mask_nofea
  
-(_, (_, label_size, _, _), (word2index_en, index2word_en, index2sememe, index2lexname, index2rootaffix)) = np.load(BASE_DIR + 'data_inUse1_en.npy', allow_pickle=True)
-(data_train_idx, data_dev_idx, data_test_500_seen_idx, data_test_500_unseen_idx, data_defi_c_idx, data_desc_c_idx) = np.load(BASE_DIR + 'data_inUse2_en.npy', allow_pickle=True)
+(_, (_, label_size, _, _), (word2index_en, index2word_en, index2sememe, index2lexname, index2rootaffix)) = np.load(MODELS_DATA_DIR + 'data_inUse1_en.npy', allow_pickle=True)
+(data_train_idx, data_dev_idx, data_test_500_seen_idx, data_test_500_unseen_idx, data_defi_c_idx, data_desc_c_idx) = np.load(MODELS_DATA_DIR + 'data_inUse2_en.npy', allow_pickle=True)
 data_all_idx = data_train_idx + data_dev_idx + data_test_500_seen_idx + data_test_500_unseen_idx + data_defi_c_idx
 index2word_en = np.array(index2word_en)
 sememe_num = len(index2sememe)
@@ -138,7 +140,7 @@ gc.collect()
 print('-------------------------3')
 # 添加wordnet synset用于描述为一个词时的同义词推荐
 index2synset_en = [[] for i in range(len(word2index_en))]
-for line in open(BASE_DIR + 'word_synsetWords.txt').readlines():
+for line in open(MODELS_DATA_DIR + 'word_synsetWords.txt').readlines():
     wd = line.split()[0]
     synset = line.split()[1:]
     for syn in synset:

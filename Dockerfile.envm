@@ -1,0 +1,7 @@
+FROM erikluo/wantwordsenv:v1
+
+# ADD models_data/data_definition+synset.zip /data/models/
+# ADD models_data/data_features.zip /data/models/
+# ADD models_data/models.zip /data/models/
+
+ADD models_data/ /data/models/
