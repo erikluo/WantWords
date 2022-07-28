@@ -1,4 +1,4 @@
-FROM erikluo/wantwordsenv:v1
+FROM erikluo/wantwordsenv:v1m
 
 COPY . /home/wantwords/
 WORKDIR /home/wantwords/
