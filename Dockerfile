@@ -2,7 +2,7 @@ FROM erikluo/wantwordsenv:v1m
 
 
 WORKDIR /home/wantwords/
-COPY *.py .
+COPY *.py ./
 COPY resources resources
 COPY static static
 COPY templates templates
